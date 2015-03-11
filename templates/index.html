@@ -9,10 +9,8 @@
 	{% else %}
 	<p>Happy to see you again!</p>
 	{% endif %}
-</div>
-{{ wtf.quick_form(form) }}
-<div class="row">
 	<p>The local date and time is {{ moment(current_time).format('YYYY-MM-DD HH:MM:SS')}}.</p>
 	<p>That was {{ moment(current_time).fromNow(refresh=True)}}.</p>
 </div>
+{{ wtf.quick_form(form) }}
 {% endblock %}

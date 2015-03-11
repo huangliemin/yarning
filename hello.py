@@ -49,7 +49,7 @@ def index():
 			flash('Looks like you have changed your name!')
 		user = User.query.filter_by(username=form.name.data).first()
 		if user is None:
-			user = User(username=form.name.data, role=user_role)
+			user = User(username=form.name.data, role_id=3)
 			db.session.add(user)
 			session['known'] = False
 		else:
