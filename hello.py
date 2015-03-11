@@ -9,6 +9,8 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import Required
 from flask.ext.sqlalchemy import SQLAlchemy
 import os
+from flask.ext.script import Shell
+from flask.ext.migrate import Migrate, MigrateCommand
 
 app = Flask(__name__)
 manager = Manager(app)
@@ -19,6 +21,8 @@ app.config['SECRET_KEY'] = 'my son is huangzheyan'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 db = SQLAlchemy(app)
+migrate = Migrate(app,db)
+manager.add_command('db', MigrateCommand)
 
 class NameForm(Form):
 	name = StringField('What is your name?', validators=[Required()])
@@ -70,6 +74,10 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
 	return render_template('500.html'), 500
+
+def make_shell_context():
+	return dict(app=app,db=db,User=User,Role=Role)
+manager.add_command("shell",Shell(make_context=make_shell_context))
 
 if __name__=="__main__":
 	manager.run()
