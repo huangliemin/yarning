@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-from flask import render_template, session, redirect, url_for, flash
+from flask import render_template, session, redirect, url_for, flash, current_app
 from . import main
-
+from ..email import send_mail
 from datetime import datetime	
 from .forms import NameForm
 from .. import db
@@ -19,8 +19,8 @@ def index():
 			user = User(username=form.name.data, role_id=3)
 			db.session.add(user)
 			session['known'] = False
-			if app.config['YARNING_ADMIN']:
-				send_mail(app.config['YARNING_ADMIN'],'New User','mail/new user',user=user)
+			if current_app.config['YARNING_ADMIN']:
+				send_mail(current_app.config['YARNING_ADMIN'],'New User','mail/new user',user=user)
 		else:
 			session['known'] = True
 		session['name'] = form.name.data
@@ -31,11 +31,3 @@ def index():
 @main.route('/user/<name>')
 def user(name):
 	return render_template('user.html',name=name)
-
-@main.errorhandler(404)
-def page_not_found(e):
-	return render_template('404.html'), 404
-
-@main.errorhandler(500)
-def internal_server_error(e):
-	return render_template('500.html'), 500
