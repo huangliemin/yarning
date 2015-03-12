@@ -5,7 +5,7 @@ from . import main
 from datetime import datetime	
 from .forms import NameForm
 from .. import db
-from .models import User
+from ..models import User
 
 @main.route('/', methods=['GET','POST'])
 def index():
@@ -28,3 +28,14 @@ def index():
 		return redirect(url_for('.index'))
 	return render_template('index.html',known=session.get('known',False),current_time=datetime.utcnow(),name=session.get('name'),form=form)
 
+@main.route('/user/<name>')
+def user(name):
+	return render_template('user.html',name=name)
+
+@main.errorhandler(404)
+def page_not_found(e):
+	return render_template('404.html'), 404
+
+@main.errorhandler(500)
+def internal_server_error(e):
+	return render_template('500.html'), 500

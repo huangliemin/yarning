@@ -3,7 +3,7 @@ import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-class config:
+class Config:
 	SECRET_KEY = os.environ.get('SECRET_KEY') or 'my son is huangzheyan'
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 	YARNING_MAIL_SUBJECT_PREFIX = '[YARNING]'

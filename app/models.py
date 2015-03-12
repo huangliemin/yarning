@@ -1,4 +1,4 @@
-
+# -*- coding: UTF-8 -*-
 from . import db
 
 class Role(db.Model):
