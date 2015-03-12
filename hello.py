@@ -11,6 +11,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 import os
 from flask.ext.script import Shell
 from flask.ext.migrate import Migrate, MigrateCommand
+from flask.ext.mail import Mail, Message
 
 app = Flask(__name__)
 manager = Manager(app)
@@ -23,6 +24,15 @@ app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
 manager.add_command('db', MigrateCommand)
+app.config['MAIL_SERVER'] = 'smtp.neusoft.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['YARNING_MAIL_SUBJECT_PREFIX'] = '[YARNING]'
+app.config['YARNING_MAIL_SENDER'] = 'Yarning Admin <huanglm@neusoft.com>'
+app.config['YARNING_ADMIN'] = os.environ.get('YARNING_ADMIN')
+mail = Mail(app)
 
 class NameForm(Form):
 	name = StringField('What is your name?', validators=[Required()])
@@ -56,6 +66,8 @@ def index():
 			user = User(username=form.name.data, role_id=3)
 			db.session.add(user)
 			session['known'] = False
+			if app.config['YARNING_ADMIN']:
+				send_mail(app.config['YARNING_ADMIN'],'New User','mail/new user',user=user)
 		else:
 			session['known'] = True
 		session['name'] = form.name.data
@@ -78,6 +90,12 @@ def internal_server_error(e):
 def make_shell_context():
 	return dict(app=app,db=db,User=User,Role=Role)
 manager.add_command("shell",Shell(make_context=make_shell_context))
+
+def send_mail(to, subject, template, **kwargs):
+	msg = Message(app.config['YARNING_MAIL_SUBJECT_PREFIX'] + subject, sender=app.config['YARNING_MAIL_SENDER'],recipients=[to])
+	msg.body = render_template(template + '.txt', **kwargs)
+	msg.html = render_template(template + '.html', **kwargs)
+	mail.send(msg)
 
 if __name__=="__main__":
 	manager.run()
