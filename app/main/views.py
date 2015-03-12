@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from flask import render_template, session, redirect, url_for, flash, current_app
 from . import main
-from ..email import send_mail
+from ..email import send_email
 from datetime import datetime	
 from .forms import NameForm
 from .. import db
