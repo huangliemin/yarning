@@ -6,16 +6,15 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
 	SECRET_KEY = os.environ.get('SECRET_KEY') or 'my son is huangzheyan'
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
-	MAIL_SERVER = 'smpt.aliyun.com'
-	MAIL_PORT = 25
+	MAIL_SERVER = 'smtp.neusoft.com'
+	MAIL_PORT = 587
 	MAIL_USE_TLS = True
 	MAIL_USE_SSL = False
 	MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
 	MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 	YARNING_MAIL_SUBJECT_PREFIX = '[YARNING]'
-	YARNING_MAIL_SENDER = 'Yarning Admin <fengyu19832002@aliyun.com>'
+	YARNING_MAIL_SENDER = 'Yarning Admin <huanglm@neusoft.com>'
 	YARNING_ADMIN = os.environ.get('YARNING_ADMIN')
-
 
 	@staticmethod
 	def init_app(app):
