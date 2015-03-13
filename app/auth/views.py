@@ -3,7 +3,7 @@ from flask import render_template, redirect, url_for, flash, request
 from . import auth
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from ..models import User
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, RegistrationForm, ChangePasswordForm, PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
 from .. import db
 from ..email import send_email
 
@@ -71,4 +71,73 @@ def resend_confirmation():
 	token = current_user.generate_confirmation_token()
 	send_email(current_user.email, 'Confirm Your Account','auth/email/confirm', user=current_user, token=token)
 	flash(u'认证激活邮件已经发送，请查收，认证链接有效时间为1小时！')
+	return redirect(url_for('main.index'))
+
+@auth.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+	form = ChangePasswordForm()
+	if form.validate_on_submit():
+		if current_user.verify_password(form.old_password.data):
+			current_user.password = form.password.data
+			db.session.add(current_user)
+			flash('密码修改成功！')
+			return redirect(url_for('main.index'))
+		else:
+			flash('原密码输入不正确！')
+	return render_template("auth/change_password.html", form=form)
+
+@auth.route('/reset', methods=['GET', 'POST'])
+def password_reset_request():
+	if not current_user.is_anonymous():
+		return redirect(url_for('main.index'))
+	form = PasswordResetRequestForm()
+	if form.validate_on_submit():
+		user = User.query.filter_by(email=form.email.data).first()
+		if user:
+			token = user.generate_reset_token()
+			send_email(user.email, 'Reset Your Password','auth/email/reset_password',user=user, token=token,next=request.args.get('next'))
+		flash(u'重设密码的链接邮件已经发送到您的注册邮箱中，请查收！')
+		return redirect(url_for('auth.login'))
+	return render_template('auth/reset_password.html', form=form)
+
+@auth.route('/reset/<token>', methods=['GET', 'POST'])
+def password_reset(token):
+	if not current_user.is_anonymous():
+		return redirect(url_for('main.index'))
+	form = PasswordResetForm()
+	if form.validate_on_submit():
+		user = User.query.filter_by(email=form.email.data).first()
+		if user is None:
+			return redirect(url_for('main.index'))
+		if user.reset_password(token, form.password.data):
+			flash(u'您的密码重设成功！')
+			return redirect(url_for('auth.login'))
+		else:
+			return redirect(url_for('main.index'))
+	return render_template('auth/reset_password.html', form=form)
+
+@auth.route('/change-email', methods=['GET', 'POST'])
+@login_required
+def change_email_request():
+	form = ChangeEmailForm()
+	if form.validate_on_submit():
+		if current_user.verify_password(form.password.data):
+			new_email = form.email.data
+			token = current_user.generate_email_change_token(new_email)
+			send_email(new_email, 'Confirm your email address','auth/email/change_email',user=current_user, token=token)
+			flash(u'修改邮箱的链接邮件已经发送到的注册邮箱中，请查收！')
+			return redirect(url_for('main.index'))
+		else:
+			flash(u'输入的邮箱或密码不正确。')
+	return render_template("auth/change_email.html", form=form)
+
+
+@auth.route('/change-email/<token>')
+@login_required
+def change_email(token):
+	if current_user.change_email(token):
+		flash(u'您的邮箱修改成功！')
+	else:
+		flash(u'邮箱修改失败！')
 	return redirect(url_for('main.index'))

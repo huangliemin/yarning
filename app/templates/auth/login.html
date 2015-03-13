@@ -9,12 +9,8 @@
 </div>
 <div class="col-md-4">
 	{{ wtf.quick_form(form) }}
+    <br>
+    <p>忘记密码？ <a href="{{ url_for('auth.password_reset_request') }}">点击这里进行重设。</a>.</p>
+    <p>未注册用户？<a href="{{ url_for('auth.register') }}">点击这里进行注册。</a>.</p>	
 </div>
-<p>
-	未注册用户?
-	<br></br>
-	<a href="{{ url_for('auth.register') }}">
-		点击这里进行注册。
-	</a>
-</p>
 {% endblock %}
