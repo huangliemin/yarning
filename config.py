@@ -8,7 +8,7 @@ class Config:
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 	MAIL_SERVER = 'smpt.aliyun.com'
 	MAIL_PORT = 25
-	MAIL_USE_TLS = False
+	MAIL_USE_TLS = True
 	MAIL_USE_SSL = False
 	MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
 	MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
