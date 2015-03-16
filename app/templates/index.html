@@ -5,7 +5,11 @@
 <div class="page-header">
 	<h1>您好， 
 		{% if current_user.is_authenticated() %}
-			{{ current_user.username }}，很开心您能再次访问！
+			{% if current_user.is_administrator() %}
+				管理员-{{ current_user.username }}，欢迎回来！ 
+			{% else %}
+				{{ current_user.username }}，很开心您能再次访问！
+			{% endif %}
 		{% else %}
 			陌生人，欢迎访问！
 		{% endif %}</h1>
