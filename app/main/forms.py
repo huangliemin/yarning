@@ -2,6 +2,7 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, SubmitField, TextAreaField, BooleanField, SelectField
 from wtforms.validators import Required, Email, Length, Regexp
+from flask.ext.pagedown.fields import PageDownField 
 
 class NameForm(Form):
 	name = StringField('What is your name?', validators=[Required()])
@@ -37,5 +38,5 @@ class EditProfileAdminForm(Form):
 			raise ValidationError('此用户名已经被注册。')
 
 class PostForm(Form):
-	body = TextAreaField(u'您的观点', validators=[Required()])
+	body = PageDownField(u'您的说说', validators=[Required()])
 	submit = SubmitField(u'确认提交')

@@ -1,0 +1,1 @@
+@"d:\projects\yarning\venv\Scripts\python.exe" "d:\projects\yarning\venv\Scripts\markdown_py" %*
