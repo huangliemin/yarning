@@ -23,15 +23,15 @@
 			</div>
 			<div class="post-footer">
 				<a href="{{ url_for('.post',id=post.id) }}">
-					<span class="label label-default">查看详情</span>
+					<span class="label label-default">详情</span>
 				</a>
 				{% if current_user == post.author %}
 				<a href="{{ url_for('.edit',id=post.id) }}">
-					<span class="label label-primary">编辑说说</span>
+					<span class="label label-primary">编辑</span>
 				</a>
 				{% elif current_user.is_administrator() %}
 				<a href="{{ url_for('.edit',id=post.id) }}">
-					<span class="label label-danger">编辑说说-管理员</span>
+					<span class="label label-danger">编辑-管理员</span>
 				</a>
 				{% endif %}				
 			</div>

@@ -47,6 +47,13 @@ img.userimg-thumbnail {
     width: 220px;
     position: absolute;
 }
+img.followimg-thumbnail {
+    border: 1px solid #ddd;
+    height: 32px;
+    padding: 2px;
+    width: 32px;
+    position: absolute;
+}
 div.pagination {
     width: 100%;
     text-align: right;

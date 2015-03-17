@@ -16,6 +16,7 @@ class Config:
 	YARNING_MAIL_SENDER = 'Yarning Admin <huanglm@neusoft.com>'
 	YARNING_ADMIN = os.environ.get('YARNING_ADMIN')
 	YARNING_POSTS_PER_PAGE = 10
+	YARNING_FOLLOWERS_PER_PAGE = 10
 
 	@staticmethod
 	def init_app(app):
