@@ -35,3 +35,7 @@ class EditProfileAdminForm(Form):
 	def validate_username(self, field):
 		if field.data != self.user.username and User.query.filter_by(email=field.data).first():
 			raise ValidationError('此用户名已经被注册。')
+
+class PostForm(Form):
+	body = TextAreaField(u'您的观点', validators=[Required()])
+	submit = SubmitField(u'确认提交')

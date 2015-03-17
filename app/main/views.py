@@ -3,14 +3,21 @@ from flask import render_template, session, redirect, url_for, current_app, flas
 from . import main
 from datetime import datetime
 from .. import db
-from ..models import User, Permission
+from ..models import User, Permission, Post
 from ..decorators import admin_required, permission_required
-from .forms import EditProfileForm, EditProfileAdminForm
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm
 from flask.ext.login import login_user, logout_user, login_required, current_user
 
 @main.route('/', methods=['GET','POST'])
 def index():
-	return render_template('index.html',current_time=datetime.utcnow(),name=session.get('name'))
+	form = PostForm()
+	if current_user.can(Permission.WRITE_ARTICLES) and form.validate_on_submit():
+		post = Post(body=form.body.data, author=current_user._get_current_object())
+		db.session.add(post)
+		return redirect(url_for('.index'))
+	posts = Post.query.order_by(Post.timestamp.desc()).all()
+	# return render_template('index.html',current_time=datetime.utcnow(),name=session.get('name'))
+	return render_template('index.html',form=form,posts=posts,current_time=datetime.utcnow(),name=session.get('name'))
 
 @main.route('/user/<username>')
 def user(username):
