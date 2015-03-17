@@ -1,10 +1,12 @@
 {% extends "base.html" %}
+{% import "_macros.html" as macros %}
 
 {% block title %}Yarning - {{ user.username }}{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
 <!-- 	<img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}"> -->
+	<img class="img-rounded userimg-thumbnail" src="http://himg.bdimg.com/sys/portrait/item/ae2b6a757374696e31313133490a.jpg">
 	<div class="profile-header">
 		<h1>{{ user.username }}!</h1>
 		{% if user.name or user.location %}
@@ -34,4 +36,11 @@
 		</p>
 	</div>
 </div>
+<h3>{{ user.username }}发布的说说</h3>
+{% include '_posts.html'%}
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
+</div>
+{% endif %}
 {% endblock %}

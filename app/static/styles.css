@@ -37,3 +37,16 @@ img.postimg-thumbnail {
     padding: 2px;
     width: 40px;
 }
+img.userimg-thumbnail {
+    border: 1px solid #ddd;
+    height: 220px;
+    padding: 2px;
+    width: 220px;
+    position: absolute;
+}
+div.pagination {
+    width: 100%;
+    text-align: right;
+    padding: 0px;
+    margin: 0px;
+}
