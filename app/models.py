@@ -45,6 +45,12 @@ class Permission:
 	MODERATE_COMMENTS = 0x08
 	ADMINISTER = 0x80
 
+class Follow(db.Model):
+	__tablename__='follows'
+	follower_id = db.Column(db.Integer,db.ForeignKey('users.id'),primary_key=True)
+	followed_id = db.Column(db.Integer,db.ForeignKey('users.id'),primary_key=True)
+	timestamp = db.Column(db.DateTime,default=datetime.utcnow)	
+
 class User(UserMixin, db.Model):
 	__tablename__ = 'users'
 	id = db.Column(db.Integer, primary_key = True)
@@ -60,8 +66,8 @@ class User(UserMixin, db.Model):
 	last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 	avatar_hash = db.Column(db.String(32))
 	posts = db.relationship('Post',backref='author',lazy='dynamic')
-	followed = db.relationship('Follow',foreign_key=[Follow.follower_id],backref=db.backref('follower',lazy='joined'),lazy='dynamic',cascade='all, delete-orphan')
-	followers = db.relationship('Follow',foreign_key=[Follow.followed_id],backref=db.backref('followed',lazy='joined'),lazy='dynamic',cascade='all, delete-orphan')
+	followed = db.relationship('Follow',foreign_keys=[Follow.follower_id],backref=db.backref('follower',lazy='joined'),lazy='dynamic',cascade='all, delete-orphan')
+	followers = db.relationship('Follow',foreign_keys=[Follow.followed_id],backref=db.backref('followed',lazy='joined'),lazy='dynamic',cascade='all, delete-orphan')
 
 	def __repr__(self):
 		return '<User %r>' % self.username
@@ -225,11 +231,6 @@ class Post(db.Model):
 		allowed_tags = ['a','abbr','acronym','b','blockquote','code','em','i','li','ol','pre','strong','ul','h1','h2','h3','p']
 		target.body_html = bleach.linkify(bleach.clean(markdown(value,output_format='html'),tags=allowed_tags,strip=True))
 
-class Follow(db.Model):
-	__tablename__='follows'
-	follower_id = db.Column(db.Integer,db.ForeignKey('users.id'),primary_key=True)
-	followed_id = db.Column(db.Integer,db.ForeignKey('users.id'),primary_key=True)
-	timestamp = db.Column(db.DateTime,default=datetime.utcnow)	
 
 db.event.listen(Post.body,'set',Post.on_changed_body)
 login_manager.anonymous_user = AnonymousUser
